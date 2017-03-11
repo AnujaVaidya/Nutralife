@@ -1,0 +1,311 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Nutralife - Reports</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="/stylesheets/sb-admin.css" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="/stylesheets/morris.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="/stylesheets/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    
+    <! -- For AM Charts -->
+    <script src="http://www.amcharts.com/lib/3/amcharts.js"></script>
+	<script src="http://www.amcharts.com/lib/3/pie.js"></script>
+	<script src="http://www.amcharts.com/lib/3/themes/light.js"></script>
+	
+	<style>
+		#chartdiv {
+		width		: 100%;
+		height		: 435px;
+		font-size	: 11px;
+		}
+	</style>
+	
+		    
+</head>
+
+<body ng-app="graphAngular" ng-controller="graphController">
+
+	<div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">NUTRALIFE</a>
+            </div>
+            
+            <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+            
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+            
+                <ul class="nav navbar-nav side-nav">
+                
+                    <li>
+                        <a href="bodyprof"><i class="fa fa-fw fa-edit"></i> Body Profile</a>
+                    </li>
+                    
+                    <li>
+                        <a href="food"><i class="fa fa-fw fa-table"></i> Food/Exercise Log</a>
+                    </li>
+                    
+                    <li>
+                        <a href="repo"><i class="fa fa-fw fa-bar-chart-o"></i> Reports</a>
+                    </li>
+                    
+                </ul>
+                 
+            </div>
+            <!-- /.navbar-collapse -->
+        </nav>
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+            
+            	<div class="container">
+				
+					<div class="row">
+				
+						<div class="col-lg-12 col-md-7 col-sm-9">
+			
+					  	<h4 style="border-bottom: 1px solid #c5c5c5;">
+					    	Analysis Reports
+					  	</h4>
+					  	
+					  	<div style="padding: 20px;" id="form-olvidado">
+					  	
+					  		<form accept-charset="UTF-8" role="form" id="graph-form">
+			  			
+			    				<fieldset>
+				      		
+									<div class="form-group input-group">
+							        
+							           	<label class="control-label">Choose Your Option</label>
+							           	
+	    								<select name="report" class="form-control beta" ng-model="report">
+	            							<option value="A">Types of Users</option>
+	            							<option value="B">Users Calorie Consumption Pattern</option>
+	            						</select>
+	    								
+									</div>
+							        
+							     </fieldset>
+							     
+							  </form>
+							  
+						  </div>
+					  	
+					</div>
+					
+					<br>
+					
+					<div class="row">
+					
+						<div class="col-lg-3 col-md-7 col-sm-9">
+					
+							<button class="btn btn-primary btn-block" ng-click="showGraph()">Display Analysis</button>
+							
+						</div>
+						
+					</div>
+					
+					<div class="row" ng-show="graphs">
+					
+						<div class="col-lg-12 col-md-7 col-sm-9">
+						
+							<div id="chartdiv"></div>
+							
+						</div>
+						
+					</div>  <!-- Graph - End -->
+					
+				</div>
+            
+            <!-- /.container -->	
+
+            </div>
+    	      
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="/js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/js/bootstrap.min.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <!--
+    <script src="../public/js/raphael.min.js"></script>
+    <script src="../public/js/morris.min.js"></script>
+    <script src="../public/js/morris-data.js"></script>
+	-->
+	
+	<script>
+  
+  	<!-- Controller Graph -->
+  	
+  	var graph = angular.module('graphAngular', []);
+	graph.controller('graphController', homeOperations); 
+			
+	function homeOperations($scope, $http) {
+	
+	$scope.graphs = false;
+	
+	$scope.showGraph = function(){
+	
+	var chart;
+	
+	$scope.graphs = true;
+	
+	console.log("Graph Function: " + $scope.report);
+	
+	if ($scope.report === "A"){
+	
+		$http.get("/getUserTypes")
+		.success(function(data) {
+		
+			console.log("Success returned from getUserTypes function");
+			console.log(data.results);
+			
+		
+		var chart = AmCharts.makeChart( "chartdiv", {
+		
+		  "type": "pie",
+		  "theme": "light",
+		  "dataProvider": data.results,
+		  "valueField": "Count",
+		  "titleField": "Weight Type",
+		  "outlineAlpha": 0.4,
+		  "depth3D": 15,
+		  "balloonText": "[[title]]<br><span style='font-size:14px'><b>[[Count]]</b> ([[percents]]%)</span>",
+		  "angle": 30,
+		  "export": {
+		    "enabled": true
+		  }
+		} );
+		jQuery( '.chart-input' ).off().on( 'input change', function() {
+		  var property = jQuery( this ).data( 'property' );
+		  var target = chart;
+		  var value = Number( this.value );
+		  chart.startDuration = 0;
+		
+		  if ( property == 'innerRadius' ) {
+		    value += "%";
+		  }
+		
+		  target[ property ] = value;
+		  chart.validateNow();
+		} );
+		
+		
+        
+     });
+		
+	} else if ($scope.report === "B"){
+	
+	
+		$http.get("/getUserGoal")
+		.success(function(data) {
+		
+			console.log("Success returned from getDailyBurnedCalories function");
+			console.log(data.results);
+			
+			var chart = AmCharts.makeChart( "chartdiv", {
+		
+		  "type": "pie",
+		  "theme": "light",
+		  "dataProvider": data.results,
+		  "valueField": "Count",
+		  "titleField": "Goal",
+		  "outlineAlpha": 0.4,
+		  "depth3D": 15,
+		  "balloonText": "[[title]]<br><span style='font-size:14px'><b>[[Count]]</b> ([[percents]]%)</span>",
+		  "angle": 30,
+		  "export": {
+		    "enabled": true
+		  }
+		} );
+		jQuery( '.chart-input' ).off().on( 'input change', function() {
+		  var property = jQuery( this ).data( 'property' );
+		  var target = chart;
+		  var value = Number( this.value );
+		  chart.startDuration = 0;
+		
+		  if ( property == 'innerRadius' ) {
+		    value += "%";
+		  }
+		
+		  target[ property ] = value;
+		  chart.validateNow();
+		} );
+			
+	})
+	
+	} else if ($scope.report === "F"){
+	
+		$http.get("/getFoodLog")
+  			.success(function(data) {
+  				console.log("Success returned from getFoodLog function");
+  				
+  			})
+	
+	} else if ($scope.report === "E"){
+	
+		$http.get("/getExerciseLog")
+  			.success(function(data) {
+  				console.log("Success returned from getExerciseLog function");
+  				
+  			})
+	
+	}
+		
+	}
+	
+}
+  		
+	</script>
+	
+	
+</body>
+
+</html>
